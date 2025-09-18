@@ -4,6 +4,7 @@ import { ChevronDown, CalendarDays, Upload, LinkIcon, Filter, RefreshCw, AlertCi
 
 /**
  * PhD Supervisory Meeting Records – Single‑Page App (SPA)
+ * by Aven Le zhou
  * ------------------------------------------------------
  * What this does
  *  - Reads a CSV (either from a published Google Sheet CSV URL or manual upload)
