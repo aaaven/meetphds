@@ -115,7 +115,8 @@ function normalizeRecord(raw) {
     project: raw[COLUMN_MAP.project] || "Unspecified Project",
     topic: raw[COLUMN_MAP.topic] || "(No topic)",
     subtopics: splitList(raw[COLUMN_MAP.subtopics] || ""),
-    my_inputs: raw[COLUMN_MAP.my_inputs] || "(No inputs)",
+    my_inputs: raw[COLUMN_MAP.my_inputs] || "",
+    my_inputs_items: splitList(raw[COLUMN_MAP.my_inputs] || ""),
     link: raw[COLUMN_MAP.link] || "",
     action_items,
     _raw: raw,
@@ -359,13 +360,21 @@ export default function App() {
                   <div className="mt-3">
                     <div className="text-sm uppercase tracking-wide text-gray-500 mb-1">Supervisor's Inputs & Suggestions</div>
                     <div className="prose prose-sm max-w-none">
-                      <p>{r.my_inputs}</p>
+                      {r.my_inputs_items && r.my_inputs_items.length > 0 ? (
+                        <div>
+                          {r.my_inputs_items.map((it, i) => (
+                            <Chip key={i}>{it}</Chip>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="italic text-gray-500">(No inputs)</p>
+                      )}
                     </div>
                   </div>
                   {r.action_items && r.action_items.length > 0 && (
                     <div className="mt-3">
                       <div className="text-sm uppercase tracking-wide text-gray-500 mb-1">Action Points</div>
-                      <ul className="list-disc pl-5">
+                      <ul className="list-none pl-0 space-y-1 text-sm">
                         {r.action_items.map((a, i) => (
                           <li key={i}>{a}</li>
                         ))}
