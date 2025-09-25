@@ -250,6 +250,25 @@ export default function App() {
     });
   }, [filteredRecords]);
 
+  // 1) After computing sortedRecords, add this useMemo:
+  const projectTimelines = useMemo(() => {
+    const map = new Map();
+    records.forEach((r) => {
+      const key = r.project || "Unspecified Project";
+      if (!map.has(key)) map.set(key, []);
+      map.get(key).push(r);
+    });
+    // sort each project by earliest → latest
+    for (const [key, arr] of map.entries()) {
+      arr.sort((a, b) => {
+        const ta = a.date ? a.date.getTime() : 0;
+        const tb = b.date ? b.date.getTime() : 0;
+        return ta - tb;
+      });
+    }
+    return map;
+  }, [records]);
+
   function handleCsvFile(e) {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -317,6 +336,30 @@ export default function App() {
         </div>
       </header>
 
+      {/* Project Timelines */}
+      <Section title="Project Timelines">
+        {projects.filter((p) => p !== "ALL").map((project) => {
+          const items = projectTimelines.get(project) || [];
+          return (
+            <div key={project} className="mb-4">
+              <div className="font-semibold mb-1">{project}</div>
+              {items.length === 0 ? (
+                <div className="text-sm text-gray-500">(No records)</div>
+              ) : (
+                <div className="flex flex-wrap items-center gap-1">
+                  {items.map((r, idx) => (
+                    <React.Fragment key={idx}>
+                      {idx > 0 && <span className="mx-1 text-gray-400">→</span>}
+                      <Chip>{`${r.date_label}: ${r.topic}`}</Chip>
+                    </React.Fragment>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </Section>
+      
       {/* Results */}
       <Section title="Records">
         {sortedRecords.length === 0 ? (
